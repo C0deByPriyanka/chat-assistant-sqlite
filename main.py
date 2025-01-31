@@ -1,9 +1,14 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
 import sqlite3
 import re
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
 def query_db(sql, params=()):
     conn = sqlite3.connect("company.db")
@@ -48,6 +53,10 @@ known_departments = ["Sales", "Engineering", "Marketing"]
 
 class UserQuery(BaseModel):
     query: str
+
+@app.get("/")
+async def get_home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/query")
 def handle_query(user_query: UserQuery):

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Assistant - SQLite</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Chat Assistant - SQLite</h1>
+        <div>
+            <label for="user-query">Enter your query:</label>
+            <input type="text" id="user-query" placeholder="e.g., Employees in Sales department">
+        </div>
+        <button onclick="sendQuery()">Submit</button>
+        
+        <div id="result" class="result">
+            <p id="response-message"></p>
+        </div>
+    </div>
+
+    <script>
+        async function sendQuery() {
+            const query = document.getElementById('user-query').value;
+            const responseMessage = document.getElementById('response-message');
+            const resultContainer = document.getElementById('result');
+
+            if (!query) {
+                responseMessage.textContent = "Please enter a query!";
+                return;
+            }
+
+            try {
+                const response = await fetch("/query", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ query: query })
+                });
+
+                const data = await response.json();
+
+                // Display results in a formatted way
+                if (data.error) {
+                    responseMessage.textContent = `Error: ${data.error}`;
+                } else {
+                    let formattedResult = "<strong>Results:</strong><ul>";
+                    if (data.employees) {
+                        data.employees.forEach(employee => {
+                            formattedResult += `<li>${employee}</li>`;
+                        });
+                    } else if (data.manager) {
+                        formattedResult = `<strong>Manager: </strong>${data.manager}`;
+                    } else if (data.total_salary !== undefined) {
+                        formattedResult = `<strong>Total Salary Expense: </strong>${data.total_salary}`;
+                    }
+                    formattedResult += "</ul>";
+                    responseMessage.innerHTML = formattedResult;
+                }
+            } catch (error) {
+                responseMessage.textContent = "An error occurred while processing your query.";
+            }
+
+            resultContainer.style.display = "block";
+        }
+    </script>
+</body>
+</html>
