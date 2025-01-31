@@ -1,7 +1,3 @@
-Here's an updated `README.md` based on the recent changes, including the UI integration and deployment steps.
-
----
-
 # Chat Assistant with SQLite
 
 This is a FastAPI-powered web application that allows users to query an SQLite database and get formatted responses based on predefined queries. It supports basic SQL queries like listing employees from a department, getting the manager of a department, listing employees hired after a certain date, and more.
