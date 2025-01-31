@@ -1,0 +1,4 @@
+fastapi
+uvicorn
+spacy
+sqlite3
