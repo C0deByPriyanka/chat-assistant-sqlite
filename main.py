@@ -1,10 +1,7 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from pydantic import BaseModel
 import sqlite3
-import spacy
-
-# Load NLP model
-nlp = spacy.load("en_core_web_sm")
+import re
 
 app = FastAPI()
 
@@ -47,40 +44,56 @@ def init_db():
 
 init_db()
 
+known_departments = ["Sales", "Engineering", "Marketing"]
+
 class UserQuery(BaseModel):
     query: str
 
 @app.post("/query")
 def handle_query(user_query: UserQuery):
     query = user_query.query.lower()
-    doc = nlp(query)
+    department = None
+    date = None
+
+    # Look for department names using simple keyword matching (case insensitive)
+    for dept in known_departments:
+        if dept.lower() in query:
+            department = dept
+            break
+    # Look for dates using regex (e.g., after 2021-01-01, or before a certain date)
+    date_pattern = r'\d{4}-\d{2}-\d{2}'
+    date_match = re.search(date_pattern, query)
+    if date_match:
+        date = date_match.group(0)
     
     if "employees" in query and "department" in query:
-        for ent in doc.ents:
-            if ent.label_ == "ORG":
-                sql = "SELECT Name FROM Employees WHERE Department = ?"
-                results = query_db(sql, (ent.text,))
-                return {"employees": [row[0] for row in results]}
+        if department:
+            sql = "SELECT Name FROM Employees WHERE Department = ?"
+            results = query_db(sql, (department,))
+            return {"employees": [row[0] for row in results]}
+        return {"error": "Please specify the correct department."}
+                
     
     elif "manager" in query and "department" in query:
-        for ent in doc.ents:
-            if ent.label_ == "ORG":
-                sql = "SELECT Manager FROM Departments WHERE Name = ?"
-                results = query_db(sql, (ent.text,))
-                return {"manager": results[0][0] if results else "Not found"}
+        
+        if department:
+            sql = "SELECT Manager FROM Departments WHERE Name = ?"
+            results = query_db(sql, (department,))
+            return {"manager": results[0][0] if results else "Not found"}
+        return {"error": "Please specify the correct department."}
     
     elif "hired after" in query:
-        for ent in doc.ents:
-            if ent.label_ == "DATE":
-                sql = "SELECT Name FROM Employees WHERE Hire_Date > ?"
-                results = query_db(sql, (ent.text,))
-                return {"employees": [row[0] for row in results]}
+        if date:
+            sql = "SELECT Name FROM Employees WHERE Hire_Date > ?"
+            results = query_db(sql, (date,))
+            return {"employees": [row[0] for row in results]}
+        return {"error": "Please specify correct date"}
     
-    elif "total salary expense for" in query:
-        for ent in doc.ents:
-            if ent.label_ == "ORG":
-                sql = "SELECT SUM(Salary) FROM Employees WHERE Department = ?"
-                results = query_db(sql, (ent.text,))
-                return {"total_salary": results[0][0] if results[0][0] else 0}
+    elif "total salary expense" in query:
+        if department:
+            sql = "SELECT SUM(Salary) FROM Employees WHERE Department = ?"
+            results = query_db(sql, (department,))
+            return {"total_salary": results[0][0] if results[0][0] else 0}
+        return {"error": "Please specify the correct department."}
     
     return {"error": "Unsupported query"}

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a **FastAPI-based Chat Assistant** that interacts with an SQLite database. It uses **spaCy NLP** to process natural language queries and convert them into SQL queries to fetch relevant data.
+This project is a **FastAPI-based Chat Assistant** that interacts with an SQLite database.
 
 ## Features
 
@@ -18,7 +18,7 @@ This project is a **FastAPI-based Chat Assistant** that interacts with an SQLite
 
 Make sure you have the following installed:
 
-- Python 3.8+
+- Python 3.9+
 - SQLite
 - pip (Python package manager)
 
@@ -93,7 +93,3 @@ docker run -p 8000:8000 chat-assistant
 - Enhance NLP model for better entity recognition.
 - Add a front-end UI.
 - Improve error handling and logging.
-
-## License
-
-MIT License
