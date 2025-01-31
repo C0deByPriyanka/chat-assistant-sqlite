@@ -25,7 +25,7 @@ Make sure you have the following installed:
 ### Clone the Repository
 
 ```sh
-git clone <repo_url>
+git clone https://github.com/C0deByPriyanka/chat-assistant-sqlite.git
 cd chat-assistant-sqlite
 ```
 
