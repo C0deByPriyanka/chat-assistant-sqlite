@@ -1,95 +1,124 @@
-# Chat Assistant for SQLite Database
+Here's an updated `README.md` based on the recent changes, including the UI integration and deployment steps.
 
-## Overview
+---
 
-This project is a **FastAPI-based Chat Assistant** that interacts with an SQLite database.
+# Chat Assistant with SQLite
+
+This is a FastAPI-powered web application that allows users to query an SQLite database and get formatted responses based on predefined queries. It supports basic SQL queries like listing employees from a department, getting the manager of a department, listing employees hired after a certain date, and more.
+
+The app includes a simple UI where users can type natural language queries, and it returns results in a user-friendly format.
 
 ## Features
 
-- Accepts natural language queries.
-- Converts queries into SQL statements dynamically.
-- Fetches and returns structured data from an SQLite database.
-- Handles errors gracefully.
-- Deployed using FastAPI.
+- **FastAPI Backend**: Fast, modern web framework for building APIs.
+- **SQLite Database**: Lightweight, serverless, self-contained SQL database engine.
+- **Intuitive UI**: A simple web interface where users can type queries and see results.
+- **Dockerized**: Easily deployable using Docker.
+- **Public URL**: Hosted on platforms like Railway or Render for free.
 
-## Installation
+## Project Structure
+
+```
+chat-assistant-sqlite/
+├── company.db            # SQLite database file
+├── Dockerfile            # Dockerfile for deployment
+├── main.py               # FastAPI application logic
+├── requirements.txt      # Python dependencies
+├── static/               # Static files like CSS, JS
+├── templates/            # HTML templates for the UI
+└── .dockerignore         # Files to exclude from Docker image
+```
+
+### Tables in the Database
+
+#### Employees Table
+
+| ID  | Name    | Department  | Salary | Hire_Date  |
+| --- | ------- | ----------- | ------ | ---------- |
+| 1   | Alice   | Sales       | 50000  | 2021-01-15 |
+| 2   | Bob     | Engineering | 70000  | 2020-06-10 |
+| 3   | Charlie | Marketing   | 60000  | 2022-03-20 |
+
+#### Departments Table
+
+| ID  | Name        | Manager |
+| --- | ----------- | ------- |
+| 1   | Sales       | Alice   |
+| 2   | Engineering | Bob     |
+| 3   | Marketing   | Charlie |
+
+## Getting Started
+
+Follow these steps to set up and run the application locally or deploy it.
 
 ### Prerequisites
 
-Make sure you have the following installed:
-
 - Python 3.9+
-- SQLite
-- pip (Python package manager)
+- Docker (optional, if you want to run the app in a container)
 
-### Clone the Repository
+### Installing Locally
 
-```sh
-git clone https://github.com/C0deByPriyanka/chat-assistant-sqlite.git
-cd chat-assistant-sqlite
-```
+1. Clone this repository to your local machine:
 
-### Create a Virtual Environment
+   ```bash
+   git clone https://github.com/yourusername/chat-assistant-sqlite.git
+   cd chat-assistant-sqlite
+   ```
 
-```sh
-python -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
-```
+2. Install the required Python packages:
 
-### Install Dependencies
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-```sh
-pip install -r requirements.txt
-```
+3. Run the FastAPI application:
 
-### Initialize the Database
+   ```bash
+   uvicorn main:app --reload
+   ```
 
-```sh
-python -c "from main import init_db; init_db()"
-```
+   This will start the app at `http://127.0.0.1:8000`.
 
-### Run the Server
+4. You can visit the UI at `http://127.0.0.1:8000/` and start interacting with the app by typing queries.
 
-```sh
-uvicorn main:app --reload
-```
+### Dockerizing the App
 
-The server will start at: `http://127.0.0.1:8000`
+1. **Build the Docker image**:
 
-## API Usage
+   ```bash
+   docker build -t chat-assistant-sqlite .
+   ```
 
-### Query Endpoint
+2. **Run the Docker container**:
 
-- **Endpoint**: `POST /query`
-- **Request Body (JSON format)**:
+   ```bash
+   docker run -p 8000:8000 chat-assistant-sqlite
+   ```
 
-```json
-{
-  "query": "Show me all employees in Sales department."
-}
-```
+3. Your app will be available at `http://127.0.0.1:8000` in the browser.
 
-- **Response (Example)**:
+### Deploying to Railway
 
-```json
-{
-  "employees": ["Alice"]
-}
-```
+You can deploy this app to Railway for free with the following steps:
 
-## Deployment
+1. Go to [Railway](https://railway.app/) and sign up or log in.
+2. Create a new project and select **"Deploy from GitHub"**.
+3. Link your GitHub account and select the repository you just created.
+4. Railway will automatically detect the `Dockerfile` and deploy your app.
+5. After deployment, Railway will provide a public URL to access the app.
 
-To deploy this project, use **Docker**, **Render**, or **Railway**.
+## UI Interaction
 
-Example Docker usage:
+Once deployed or running locally, you can interact with the app through the following types of queries:
 
-```sh
-docker build -t chat-assistant .
-docker run -p 8000:8000 chat-assistant
-```
+- **"Show me all employees in the Sales department."**
+- **"Who is the manager of the Engineering department?"**
+- **"List all employees hired after 2021-01-01."**
+- **"What is the total salary expense for the Marketing department?"**
 
-## Improvements
+The app will return formatted results for these queries, and you can ask more based on the supported types.
 
-- Enhance NLP model for better entity recognition.
-- Add a front-end UI.
-- Improve error handling and logging.
+## File and Database Structure
+
+- The app is initialized with a sample SQLite database (`company.db`) containing tables for **Employees** and **Departments**.
+- You can modify the database by adding more employees, departments, or changing existing data.
