@@ -12,7 +12,7 @@ Do watch the demo video to understand the app.
 - **SQLite Database**: Lightweight, serverless, self-contained SQL database engine.
 - **Intuitive UI**: A simple web interface where users can type queries and see results.
 - **Dockerized**: Easily deployable using Docker.
-- **Public URL**: Hosted on platforms like Railway or Render for free.
+- **Public URL**: Hosted on Railway platform - https://chat-assistant-sqlite-production.up.railway.app/
 
 ## Project Structure
 
