@@ -25,7 +25,6 @@ chat-assistant-sqlite/
 ├── db_init.py            # Database initialization and seeding
 ├── query_handler.py      # Handles user queries and database logic
 ├── utils.py              # Utility functions for query processing
-├── static/               # Static files like CSS, JS
 ├── templates/            # HTML templates for the UI
 ├── demo.mp4              # Demo video of the app
 └── .dockerignore         # Files to exclude from Docker image
