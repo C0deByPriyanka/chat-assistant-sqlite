@@ -9,3 +9,4 @@ venv
 *.gitignore
 Dockerfile
 README.md
+demo.mp4
