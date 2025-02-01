@@ -4,6 +4,8 @@ This is a FastAPI-powered web application that allows users to query an SQLite d
 
 The app includes a simple UI where users can type natural language queries, and it returns results in a user-friendly format.
 
+Do watch the demo video to understand the app.
+
 ## Features
 
 - **FastAPI Backend**: Fast, modern web framework for building APIs.
@@ -25,6 +27,7 @@ chat-assistant-sqlite/
 ├── utils.py              # Utility functions for query processing
 ├── static/               # Static files like CSS, JS
 ├── templates/            # HTML templates for the UI
+├── demo.mp4              # Demo video of the app
 └── .dockerignore         # Files to exclude from Docker image
 ```
 
