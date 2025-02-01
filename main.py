@@ -4,11 +4,14 @@ import sqlite3
 import re
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+import db_init
 
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
+db_init.init_db()
 
 def query_db(sql, params=()):
     conn = sqlite3.connect("company.db")
@@ -17,37 +20,6 @@ def query_db(sql, params=()):
     results = cursor.fetchall()
     conn.close()
     return results
-
-# Initialize the database with schema and sample data
-def init_db():
-    conn = sqlite3.connect("company.db")
-    cursor = conn.cursor()
-    cursor.executescript('''
-        CREATE TABLE IF NOT EXISTS Employees (
-            ID INTEGER PRIMARY KEY,
-            Name TEXT,
-            Department TEXT,
-            Salary INTEGER,
-            Hire_Date TEXT
-        );
-        CREATE TABLE IF NOT EXISTS Departments (
-            ID INTEGER PRIMARY KEY,
-            Name TEXT,
-            Manager TEXT
-        );
-        INSERT OR IGNORE INTO Employees (ID, Name, Department, Salary, Hire_Date) VALUES
-            (1, 'Alice', 'Sales', 50000, '2021-01-15'),
-            (2, 'Bob', 'Engineering', 70000, '2020-06-10'),
-            (3, 'Charlie', 'Marketing', 60000, '2022-03-20');
-        INSERT OR IGNORE INTO Departments (ID, Name, Manager) VALUES
-            (1, 'Sales', 'Alice'),
-            (2, 'Engineering', 'Bob'),
-            (3, 'Marketing', 'Charlie');
-    ''')
-    conn.commit()
-    conn.close()
-
-init_db()
 
 known_departments = ["Sales", "Engineering", "Marketing"]
 

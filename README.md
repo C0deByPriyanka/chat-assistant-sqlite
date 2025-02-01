@@ -20,6 +20,7 @@ chat-assistant-sqlite/
 ├── Dockerfile            # Dockerfile for deployment
 ├── main.py               # FastAPI application logic
 ├── requirements.txt      # Python dependencies
+├── db_init.py            # Database initialization and seeding
 ├── static/               # Static files like CSS, JS
 ├── templates/            # HTML templates for the UI
 └── .dockerignore         # Files to exclude from Docker image

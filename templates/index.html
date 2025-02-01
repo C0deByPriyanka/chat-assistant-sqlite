@@ -54,7 +54,7 @@
                     } else if (data.manager) {
                         formattedResult = `<strong>Manager: </strong>${data.manager}`;
                     } else if (data.total_salary !== undefined) {
-                        formattedResult = `<strong>Total Salary Expense: </strong>${data.total_salary}`;
+                        formattedResult = `<strong>Total Salary Expense: </strong> $${data.total_salary}`;
                     }
                     formattedResult += "</ul>";
                     responseMessage.innerHTML = formattedResult;
