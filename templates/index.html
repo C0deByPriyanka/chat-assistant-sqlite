@@ -3,68 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Assistant - SQLite</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <title>Company Chat Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 650px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .response-box {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+        .query-examples {
+            font-size: 14px;
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Chat Assistant - SQLite</h1>
-        <div>
-            <label for="user-query">Enter your query:</label>
-            <input type="text" id="user-query" placeholder="e.g., Employees in Sales department">
-        </div>
-        <button onclick="sendQuery()">Submit</button>
-        
-        <div id="result" class="result">
-            <p id="response-message"></p>
-        </div>
+
+<div class="container">
+    <h2 class="text-center">Company Chat Assistant</h2>
+    <p class="text-muted text-center">Ask questions about employees, salaries, departments, and more!</p>
+    
+    <div class="mb-3">
+        <label for="userQuery" class="form-label">Enter your query:</label>
+        <input type="text" class="form-control" id="userQuery" placeholder="e.g., Who is the manager of Sales department?">
+    </div>
+    
+    <button class="btn btn-primary w-100" id="submitQuery">Submit</button>
+    
+    <div class="response-box mt-3" id="responseBox">
+        <h5>Response:</h5>
+        <div id="responseContent"></div>
     </div>
 
-    <script>
-        async function sendQuery() {
-            const query = document.getElementById('user-query').value;
-            const responseMessage = document.getElementById('response-message');
-            const resultContainer = document.getElementById('result');
+    <div class="mt-4">
+        <h6>Example Queries:</h6>
+        <ul class="query-examples">
+            <li>List all employees in the Sales department.</li>
+            <li>Who is the manager of the Marketing department?</li>
+            <li>Show employees hired after 2022-01-01.</li>
+            <li>What is the total salary expense for Engineering?</li>
+        </ul>
+    </div>
+</div>
 
-            if (!query) {
-                responseMessage.textContent = "Please enter a query!";
+<script>
+    $(document).ready(function() {
+        $("#submitQuery").click(function() {
+            var userQuery = $("#userQuery").val().trim();
+            if (userQuery === "") {
+                alert("Please enter a query.");
                 return;
             }
 
-            try {
-                const response = await fetch("/query", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ query: query })
-                });
-
-                const data = await response.json();
-
-                // Display results in a formatted way
-                if (data.error) {
-                    responseMessage.textContent = `Error: ${data.error}`;
-                } else {
-                    let formattedResult = "<strong>Results:</strong><ul>";
-                    if (data.employees) {
-                        data.employees.forEach(employee => {
-                            formattedResult += `<li>${employee}</li>`;
-                        });
-                    } else if (data.manager) {
-                        formattedResult = `<strong>Manager: </strong>${data.manager}`;
-                    } else if (data.total_salary !== undefined) {
-                        formattedResult = `<strong>Total Salary Expense: </strong> $${data.total_salary}`;
-                    }
-                    formattedResult += "</ul>";
-                    responseMessage.innerHTML = formattedResult;
+            $.ajax({
+                url: "/query",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ query: userQuery }),
+                success: function(response) {
+                    formatResponse(response);
+                    $("#responseBox").fadeIn();
+                },
+                error: function() {
+                    $("#responseContent").html("<p class='text-danger'>Error processing request.</p>");
+                    $("#responseBox").fadeIn();
                 }
-            } catch (error) {
-                responseMessage.textContent = "An error occurred while processing your query.";
+            });
+        });
+
+        function formatResponse(response) {
+            let htmlContent = "";
+
+            if (Array.isArray(response)) {
+                // If response is a list, format it as a table
+                htmlContent += "<table class='table table-striped'><thead><tr><th>Result</th></tr></thead><tbody>";
+                response.forEach(item => {
+                    htmlContent += `<tr><td>${item}</td></tr>`;
+                });
+                htmlContent += "</tbody></table>";
+            } 
+            else if (typeof response === "object" && response !== null) {
+                // If response is an object (dictionary), format key-value pairs
+                htmlContent += "<table class='table table-bordered'><tbody>";
+                Object.entries(response).forEach(([key, value]) => {
+                    if (Array.isArray(value)) {
+                        htmlContent += `<tr><th>${key}</th><td>${value.join(", ")}</td></tr>`;
+                    } else {
+                        htmlContent += `<tr><th>${key}</th><td>${value}</td></tr>`;
+                    }
+                });
+                htmlContent += "</tbody></table>";
+            } 
+            else {
+                // If response is a simple string
+                htmlContent = `<p>${response}</p>`;
             }
 
-            resultContainer.style.display = "block";
+            $("#responseContent").html(htmlContent);
         }
-    </script>
+    });
+</script>
+
 </body>
 </html>

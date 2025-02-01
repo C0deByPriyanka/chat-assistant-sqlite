@@ -18,9 +18,11 @@ The app includes a simple UI where users can type natural language queries, and 
 chat-assistant-sqlite/
 ├── company.db            # SQLite database file
 ├── Dockerfile            # Dockerfile for deployment
-├── main.py               # FastAPI application logic
+├── main.py               # FastAPI application entry point
 ├── requirements.txt      # Python dependencies
 ├── db_init.py            # Database initialization and seeding
+├── query_handler.py      # Handles user queries and database logic
+├── utils.py              # Utility functions for query processing
 ├── static/               # Static files like CSS, JS
 ├── templates/            # HTML templates for the UI
 └── .dockerignore         # Files to exclude from Docker image
@@ -119,3 +121,4 @@ The app will return formatted results for these queries, and you can ask more ba
 
 - The app is initialized with a sample SQLite database (`company.db`) containing tables for **Employees** and **Departments**.
 - You can modify the database by adding more employees, departments, or changing existing data.
+- The query handling is structured in query_handler.py with reusable utility functions in utils.py, making it easier to extend and maintain.
